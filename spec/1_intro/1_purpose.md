@@ -1,3 +1,0 @@
-﻿### Cel dokumentu
-
-Dokument stanowi jedyne źródło wymagań gry "Developers against Developers". Stanowi podstawę dla specyfikacji oprogramowania. Dokument przeznaczony dla zespołu deweloperskiego zajmującego się wytwarzaniem oprogramowania "Developers against developers" oraz potencjalnych kontrybutorów. Głównym celem projektu jest zaliczenie projektu zespołowego oraz możliwość oparcia na nim swojej pracy licencjackiej. 
