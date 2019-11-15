@@ -1,4 +1,5 @@
 ﻿### Potencjalne technologie
+
 * Python
 * Kivy
 * Django/Flask

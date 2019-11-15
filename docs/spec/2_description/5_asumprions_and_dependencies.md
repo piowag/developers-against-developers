@@ -1,3 +1,0 @@
-﻿### Założenia i zależności
-#### Spójność
-
