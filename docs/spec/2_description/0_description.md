@@ -1,1 +1,1 @@
-﻿## Opis ogólny
+## Opis ogólny

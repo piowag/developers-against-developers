@@ -1,1 +1,1 @@
-﻿## Wymagania
+## Wymagania

@@ -1,4 +1,4 @@
-﻿### Aktorzy i charakterystyka użytkowników
+### Aktorzy i charakterystyka użytkowników
 ID: GUEST Nazwa: Gość Opis: Gość jest dowolną osobą, która uruchomiła aplikację. Może stworzyć nowe lobby lub dołączyć do już istniejącego. Gość w lobby musi podać swój nick.
 
 ID: PLAYER Nazwa: Gracz Opis: Gracz jest użytkownikiem uczestniczącym w rozgrywce nie będącym obecnie Mistrzem Rundy. Gracz co rundę wysyła rozwiązanie na zlecone zadanie.  

@@ -1,1 +1,1 @@
-﻿## Model procesów biznesowych
+## Model procesów biznesowych

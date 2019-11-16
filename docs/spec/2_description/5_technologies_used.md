@@ -1,4 +1,4 @@
-﻿### Potencjalne technologie
+### Potencjalne technologie
 
 * Python
 * Kivy

@@ -1,4 +1,4 @@
-﻿### Funkcje produktu
+### Funkcje produktu
 Funkcjonalność podstawowa:
 
 * Tworzenie/usuwanie lobby

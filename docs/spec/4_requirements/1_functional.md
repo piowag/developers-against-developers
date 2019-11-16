@@ -1,4 +1,4 @@
-﻿### Wymagania funkcjonalne
+### Wymagania funkcjonalne
 Gość:  
 * Stwórz lobby, podaj nick  
 * Dołącz do gry, podaj nick

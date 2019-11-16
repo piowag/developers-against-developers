@@ -1,1 +1,1 @@
-﻿# Specyfikacja produktu "Developers against Developers"
+# Specyfikacja produktu "Developers against Developers"
