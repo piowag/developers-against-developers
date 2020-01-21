@@ -6,7 +6,6 @@ from inspect import (
 
 import json
 import requests
-import constant
 
 
 class InterfaceRequestError(Exception):
@@ -34,10 +33,8 @@ def get_new_method(url, name, spec):
 			if arg not in adict:
 				adict[arg] = arglist.pop()
 
-		adict[constant.HTTP_REQUEST_TYPE_ID] = name
-
 		try:
-			req = requests.get(url, params=adict)
+			req = requests.get(url + '/' + name, params=adict)
 		except Exception as ex:
 			raise InterfaceRequestError('Error during reuqests.get', ex, None)
 		try:
@@ -55,7 +52,6 @@ def decorator(url):
 	Rewrites all methods to be just senders
 	They return json object that represents server response
 	Methods must not have default values or varargs (*args, **kwargs)
-	Argument name 'method' is reserved
 	'''
 	def for_class(self):
 		for (name, value) in getmembers(self):

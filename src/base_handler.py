@@ -15,10 +15,6 @@ from urllib.parse import (
 	parse_qs,
 	)
 
-from constant import (
-	HTTP_REQUEST_TYPE_ID,
-	)
-
 
 def unlist_arguments(query):
 	for (k, value) in query.items():
@@ -39,7 +35,12 @@ class BaseHandler(BaseHTTPRequestHandler):
 
 		try:
 			try:
-				query = parse_qs(urlsplit(self.path).query)
+				splited = urlsplit(self.path)
+				method_name = splited.path
+				if method_name.startswith('/'):
+					method_name = method_name[1:]
+
+				query = parse_qs(splited.query)
 				unlist_arguments(query)
 			except Exception as ex:
 				self.log_error(f'Error during request parsing: {ex}')
@@ -48,11 +49,6 @@ class BaseHandler(BaseHTTPRequestHandler):
 			self.send_error(HTTPStatus.BAD_REQUEST, 'Could not parse the request')
 			return
 
-		if HTTP_REQUEST_TYPE_ID not in query:
-			self.send_error(HTTPStatus.BAD_REQUEST, f'Expected "{HTTP_REQUEST_TYPE_ID}" field')
-			return
-
-		method_name = query[HTTP_REQUEST_TYPE_ID]
 		if method_name.startswith('_'):
 			self.send_error(HTTPStatus.BAD_REQUEST, f'Method named "{method_name}" does not exist')
 			return
@@ -65,9 +61,7 @@ class BaseHandler(BaseHTTPRequestHandler):
 
 		try:
 			try:
-				copy = query.copy()
-				del copy[HTTP_REQUEST_TYPE_ID]
-				result = method(**copy)
+				result = method(**query)
 			except Exception as ex:
 				self.log_error(f'Method "{method_name}" failed with {ex}')
 				raise
