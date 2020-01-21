@@ -3,6 +3,7 @@ import uuid
 import base_handler
 import constant
 
+
 class LobbyHandler:
 	def __init__(self, public_uuid):
 		self.public_uuid = public_uuid
@@ -12,6 +13,7 @@ class LobbyHandler:
 
 	def ping(self):
 		return {'uuid': str(self.public_uuid)}
+
 
 if __name__ == '__main__':
 	base_handler.run(

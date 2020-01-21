@@ -8,12 +8,14 @@ import json
 import requests
 import constant
 
+
 class InterfaceRequestError(Exception):
 	def __init__(self, m, base_exception, request):
 		message = f'{m} (base_exception: {base_exception}) (request: {request})'
 		super().__init__(message)
 		self.request = request
 		self.base_exception = base_exception
+
 
 def get_new_method(url, name, spec):
 	def new_method(*args, **kwargs):
@@ -45,6 +47,7 @@ def get_new_method(url, name, spec):
 
 		return result
 	return new_method
+
 
 def decorator(url):
 	'''

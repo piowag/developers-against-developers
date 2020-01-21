@@ -19,6 +19,7 @@ from constant import (
 	HTTP_REQUEST_TYPE_ID,
 	)
 
+
 def unlist_arguments(query):
 	for (k, value) in query.items():
 		if isinstance(value, list):
@@ -26,6 +27,7 @@ def unlist_arguments(query):
 				query[k] = value[0]
 			else:
 				raise Exception('Bad format')
+
 
 class BaseHandler(BaseHTTPRequestHandler):
 	# this name is enforced by BaseHandler
