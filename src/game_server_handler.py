@@ -1,3 +1,4 @@
+import argparse
 import enum
 import uuid
 import base_handler
@@ -162,7 +163,10 @@ class GameServerHandler:
 
 
 if __name__ == '__main__':
+    PARSER = argparse.ArgumentParser()
+    PARSER.add_argument('-p', help='Port number')
+    ARGS = PARSER.parse_args()
     base_handler.run(
         GameServerHandler(uuid.uuid4()),
-        address=constant.GAME_SERVER_DOMAIN_NAME,
-        port=constant.GAME_SERVER_PORT)
+        address=constant.LOBBY_DOMAIN_NAME,
+        port=int(ARGS.p))

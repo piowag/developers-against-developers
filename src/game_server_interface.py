@@ -1,9 +1,9 @@
-import base_interface
-import constant
 
-
-@base_interface.decorator(constant.GAME_SERVER_URL)
 class GameServerInterface:
+    """
+    Call like:
+    interface = base_interface.decorator("http:/...")(GameServerInterface)
+    """
 
     def add_player_to_game(token):
         """
