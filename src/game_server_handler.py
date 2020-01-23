@@ -51,87 +51,114 @@ class GameServerHandler:
 
     def add_player_to_game(self, token):
         if self.state is not GameState.waiting_for_players:
-            return {'msg': "Game already running"}
-        elif token in self.players:
-            return {'msg': "Player already in the game"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Game already running"}
+        if token in self.players:
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player already in the game"}
 
         self.players[token] = Player()
-        return {'msg': "Player added"}
+        return {'status': constant.STATUS_OK,
+                'msg': "Player added"}
 
     def get_player_role(self, token):
         if token not in self.players:
-            return {'msg': "Player not in game"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player not in game"}
 
-        return {'role': self.players[token].get_role().name,
+        return {'status': constant.STATUS_OK,
+                'role': self.players[token].get_role().name,
                 'msg': "Role: {}".format(self.players[token].get_role().name)}
 
     def start_game(self):
         if self.state is not GameState.waiting_for_players:
-            return {'msg': "Game already started"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Game already started"}
         if len(self.players.keys()) <= 1:
-            return {'msg': "Not enough players"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Not enough players"}
 
         # TODO: Change gm after rounds
         self.players[list(self.players.keys())[0]].set_role(Role.gm)
         self.state = GameState.waiting_for_answers
-        return {'msg': "Game started"}
+        return {'status': constant.STATUS_OK,
+                'msg': "Game started"}
 
     def get_task(self):
         if self.state is GameState.waiting_for_players:
-            return {'msg': "Game not yet started"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Game not yet started"}
 
-        return {'msg': "No task implemented yet"}
+        return {'status': constant.STATUS_OK,
+                'msg': "No task implemented yet"}
 
     def send_answer(self, token, code_file):
         if token not in self.players:
-            return {'msg': "Player not in game"}
-        elif self.players[token].is_gm():
-            return {'msg': "Player is gm, can't send answers"}
-        elif self.state is not GameState.waiting_for_answers:
-            return {'msg': "Sending answers currently not possible"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player not in game"}
+        if self.players[token].is_gm():
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player is gm, can't send answers"}
+        if self.state is not GameState.waiting_for_answers:
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Sending answers currently not possible"}
 
         self.players[token].add_answer(code_file)
-        for p in self.players.keys():
-            if not self.players[p].get_answer():
-                if not self.players[p].is_gm():
-                    return {'msg': "Code file received successfully"}
+        for player in self.players:
+            if not self.players[player].get_answer():
+                if not self.players[player].is_gm():
+                    return {'status': constant.STATUS_OK,
+                            'msg': "Code file received successfully"}
         self.state = GameState.waiting_for_game_master
-        return {'msg': "Code file received successfully"}
+        return {'status': constant.STATUS_OK,
+                'msg': "Code file received successfully"}
 
     def get_answers_from_players(self, token):
         if token not in self.players:
-            return {'msg': "Player not in game"}
-        elif not self.players[token].is_gm():
-            return {'msg': "Player is not gm"}
-        elif self.state is not GameState.waiting_for_game_master:
-            return {'msg': "Answers not yet available"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player not in game"}
+        if not self.players[token].is_gm():
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player is not gm"}
+        if self.state is not GameState.waiting_for_game_master:
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Answers not yet available"}
 
-        return {t: p.get_answer() for t, p in self.players.items() if t != token}
+        return {'status': constant.STATUS_OK,
+                'answers': {t: p.get_answer() for t, p in self.players.items() if t != token}}
 
     def choose_winner(self, token, winner_token):
         if token not in self.players:
-            return {'msg': "Player not in game"}
-        elif winner_token not in self.players:
-            return {'msg': "Chosen player not in game"}
-        elif not self.players[token].is_gm():
-            return {'msg': "Player is not gm"}
-        elif self.state is not GameState.waiting_for_game_master:
-            return {'msg': "Answers not yet available"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player not in game"}
+        if winner_token not in self.players:
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Chosen player not in game"}
+        if not self.players[token].is_gm():
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player is not gm"}
+        if self.state is not GameState.waiting_for_game_master:
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Answers not yet available"}
 
         # TODO: Run code on a VM, currently assumes the code passes
         self.players[winner_token].add_points(1)
-        for p in self.players.keys():
-            self.players[p].add_answer(None)
+        for player in self.players:
+            self.players[player].add_answer(None)
         self.state = GameState.waiting_for_answers
-        return {'msg': "Winner given points"}
+        return {'status': constant.STATUS_OK,
+                'msg': "Winner given points"}
 
     def get_round_results(self, token):
         if token not in self.players:
-            return {'msg': "Player not in game"}
-        elif self.state is not GameState.waiting_for_answers:
-            return {'msg': "Round is ongoing"}
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Player not in game"}
+        if self.state is not GameState.waiting_for_answers:
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Round is ongoing"}
 
-        return {'msg': self.players[token].get_points()}
+        return {'status': constant.STATUS_OK,
+                'msg': self.players[token].get_points()}
 
 
 if __name__ == '__main__':
