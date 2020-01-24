@@ -5,13 +5,7 @@ import base_interface
 from base_interface import response_is_ok
 from game_server_interface import create_game_server_interface
 import constant
-
-
-def get_gameserver_addresses():
-	"""
-	Returns a list of strings which are game server addresses in format 'a.b.c.d:p'
-	"""
-	raise NotImplementedError()  # TODO: implement
+import k8s
 
 
 def create_gameserver_interface_by_address(address: str):
@@ -21,6 +15,7 @@ def create_gameserver_interface_by_address(address: str):
 class LobbyHandler:
 	def __init__(self, public_uuid):
 		self.public_uuid = public_uuid
+		self.k8s = k8s.K8sApi()
 
 	def echo(self, what_to_echo):
 		return {'value': what_to_echo}
@@ -29,7 +24,7 @@ class LobbyHandler:
 		return {'uuid': str(self.public_uuid)}
 
 	def find_server(self):
-		for addr in get_gameserver_addresses():
+		for addr in self.k8s.list_game_servers():
 			serv = create_gameserver_interface_by_address(addr)
 			serv_response = serv.initialize_new_game()
 			if response_is_ok(serv_response):
@@ -38,9 +33,12 @@ class LobbyHandler:
 		return {'status': constant.STATUS_ERROR,
 		        'msg': 'servers are busy'}
 
-
-if __name__ == '__main__':
+def run():
+	print(f'lobby started')
 	base_handler.run(
 		LobbyHandler(uuid.uuid4()),
 		address=constant.LOBBY_DOMAIN_NAME,
 		port=constant.LOBBY_PORT)
+
+if __name__ == '__main__':
+	run()

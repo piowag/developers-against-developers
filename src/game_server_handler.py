@@ -48,7 +48,7 @@ class Player:
 
 
 class GameServerHandler:
-    def __init__(self, public_uuid):
+    def __init__(self, public_uuid, public_url):
         self.public_uuid = public_uuid
         self.players = dict()
         self.state = GameState.waiting_for_players
@@ -57,6 +57,7 @@ class GameServerHandler:
         with open(questions_path, 'r') as questions_file:
             self.questions = json.load(questions_file)
         self.current_task = None
+        self.public_url = public_url
 
     def change_gm(self):
         self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.player)
@@ -64,7 +65,12 @@ class GameServerHandler:
         self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.gm)
 
     def initialize_new_game(self):
-        raise NotImplementedError()  # TODO: implement
+        if self.state is not GameState.waiting_for_players:
+            return {'status': constant.STATUS_ERROR,
+                    'msg': "Game already running"}
+
+        return {'status': constant.STATUS_OK,
+                'address': self.public_url}
 
     def add_player_to_game(self, token):
         if self.state is not GameState.waiting_for_players:
@@ -185,12 +191,16 @@ class GameServerHandler:
         return {'status': constant.STATUS_OK,
                 'msg': self.players[token].get_points()}
 
+def run(port):
+    url = constant.LOBBY_SCHEME + constant.LOBBY_DOMAIN_NAME + ':' + str(port)
+    print(f'server started on {url}')
+    base_handler.run(
+        GameServerHandler(uuid.uuid4(), url),
+        address=constant.LOBBY_DOMAIN_NAME,
+        port=port)
 
 if __name__ == '__main__':
     PARSER = argparse.ArgumentParser()
     PARSER.add_argument('-p', help='Port number')
     ARGS = PARSER.parse_args()
-    base_handler.run(
-        GameServerHandler(uuid.uuid4()),
-        address=constant.LOBBY_DOMAIN_NAME,
-        port=int(ARGS.p))
+    run(int(ARGS.p))
