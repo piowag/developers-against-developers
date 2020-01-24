@@ -60,7 +60,7 @@ class K8sApi:
         servers = []
         for item in pod_list:
             try:
-                if item.metada.labels["app"] == "game-server":
+                if item.metadata.labels["app"] == "game-server":
                     address = item.status.host_ip + ":" + \
                         item.metadata.name[-4:]
                     servers.append(address)
