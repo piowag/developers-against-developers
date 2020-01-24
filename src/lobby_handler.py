@@ -33,6 +33,18 @@ class LobbyHandler:
 		return {'status': constant.STATUS_ERROR,
 		        'msg': 'servers are busy'}
 
+	def add_me_to_server(self, server_public_url):
+		for addr in self.k8s.list_game_servers():
+			if addr == server_public_url:
+				token = uuid.uuid4()
+				serv = create_gameserver_interface_by_address(addr)
+				if response_is_ok(serv.add_player_to_game(token)):
+					return {'status': constant.STATUS_OK,
+					        'token': token}
+
+		return {'status': constant.STATUS_ERROR,
+		        'msg': 'bad server_public_url'}
+
 def run():
 	print(f'lobby started')
 	base_handler.run(

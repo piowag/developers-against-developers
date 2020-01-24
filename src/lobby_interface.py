@@ -15,3 +15,9 @@ class LobbyInterface:
 		"""
 		Find available game server and return it's public IP
 		"""
+
+	def add_me_to_server(server_public_url):
+		"""
+		Sign new player for a game hosted by server at server_public_url
+		Returns new player's token
+		"""
