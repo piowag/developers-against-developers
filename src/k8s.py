@@ -29,8 +29,8 @@ class K8sApi:
                 log_file.write(f"{error}")
         for item in pod_list:
             try:
-                if item.metadata.labels["app"] == "lobby"
-                return item.status.host_ip
+                if item.metadata.labels["app"] == "lobby":
+                    return item.status.host_ip
             except Exception as error:
                 with open("log.info", "a") as log_file:
                     log_file.write(f"{error}")
