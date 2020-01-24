@@ -51,17 +51,18 @@ class Player:
 class GameServerHandler:
     def __init__(self, public_uuid, public_url):
         self.public_uuid = public_uuid
+        questions_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/questions.json')
+        with open(questions_path, 'r') as questions_file:
+            self.questions = json.load(questions_file)
+        self.public_url = public_url
+        self.k8s = k8s.K8sApi()
+        self._reload()
+
+    def _reload(self):
         self.players = dict()
         self.state = GameState.waiting_for_players
         self.round = 0
-        questions_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), '../data/questions.json'
-        )
-        with open(questions_path, 'r') as questions_file:
-            self.questions = json.load(questions_file)
         self.current_task = None
-        self.public_url = public_url
-        self.k8s = k8s.K8sApi()
 
     def change_gm(self):
         self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.player)
@@ -69,9 +70,13 @@ class GameServerHandler:
         self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.gm)
 
     def initialize_new_game(self):
-        if self.state is not GameState.waiting_for_players:
+        if self.state not in [GameState.waiting_for_players,
+                              GameState.game_ended]:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Game already running"}
+
+        if self.state is GameState.game_ended:
+            self._reload()
 
         return {'status': constant.STATUS_OK,
                 'address': self.public_url}
