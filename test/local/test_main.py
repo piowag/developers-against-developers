@@ -4,6 +4,7 @@ import os
 from os import path
 from multiprocessing import Process
 import time
+import tempfile
 
 CUR_DIR = path.dirname(__file__)
 SRC_DIR = path.normpath(path.join(CUR_DIR, '../../src'))
@@ -118,4 +119,15 @@ class TestC1(unittest.TestCase):
 		print(f'get_answers_from_players: {r}')
 		r = server.get_answers_from_players(p2)
 		assert(not(response_is_ok(r))) # Not a GM
+
+	def test_send_answers(self):
+		(p1, p2, server, url) = _start_new_game()
+
+		r = server.send_answer(p2, 'echo 5 > ~/task_two')
+		assert(response_is_ok(r))
+		r = server.choose_winner(p1, p2)
+		assert(response_is_ok(r))
+
+		r = server.get_round_results(p2)
+		assert(r['msg'] == 1)
 
