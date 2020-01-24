@@ -5,6 +5,7 @@ import os
 import uuid
 import base_handler
 import constant
+import k8s
 
 
 class Role(enum.Enum):
@@ -53,11 +54,14 @@ class GameServerHandler:
         self.players = dict()
         self.state = GameState.waiting_for_players
         self.round = 0
-        questions_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/questions.json')
+        questions_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), '../data/questions.json'
+        )
         with open(questions_path, 'r') as questions_file:
             self.questions = json.load(questions_file)
         self.current_task = None
         self.public_url = public_url
+        self.k8s = k8s.K8sApi()
 
     def change_gm(self):
         self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.player)
@@ -164,8 +168,18 @@ class GameServerHandler:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Answers not yet available"}
 
-        # TODO: Run code on a VM, currently assumes the code passes
-        self.players[winner_token].add_points(1)
+        results = self.k8s.run_code_and_get_results(
+            self.current_task[0], {winner_token: self.players[winner_token].get_answer()}
+        )
+
+        if results[winner_token]:
+            self.players[winner_token].add_points(1)
+            self.players[token].add_points(1)
+        else:
+            for player in self.players:
+                if player is not winner_token:
+                    self.players[player].add_points(1)
+
         for player in self.players:
             self.players[player].add_answer(None)
         self.change_gm()
