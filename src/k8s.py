@@ -23,7 +23,7 @@ class K8sApi:
 
     def _get_lobby_ip(self):
         try:
-            self.list_pods()
+            pod_list = self.list_pods()
         except Exception as error:
             with open("log.info", "a") as log_file:
                 log_file.write(f"{error}")
@@ -52,7 +52,7 @@ class K8sApi:
     
     def list_game_servers(self):
         try:
-            self.list_pods()
+            pod_list = self.list_pods()
         except Exception as error:
             with open("log.info", "a") as log_file:
                 log_file.write(f"{error}")
