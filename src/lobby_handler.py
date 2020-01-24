@@ -19,7 +19,7 @@ class LobbyHandler:
 		return {'uuid': str(self.public_uuid)}
 
 	def find_server(self):
-		servers = self.k8s.list_game_servers():
+		servers = self.k8s.list_game_servers()
 		responses = []
 
 		for addr in servers:
