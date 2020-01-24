@@ -6,6 +6,12 @@ def create_game_server_interface():
     """
     class GameServerInterface:
 
+        def initialize_new_game():
+            """
+            Called by Lobby.
+            Returns server's public IP if it's ready to host new game.
+            """
+
         def add_player_to_game(token):
             """
             Called by lobby.

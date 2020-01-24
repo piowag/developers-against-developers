@@ -10,3 +10,8 @@ class LobbyInterface:
 
 	def ping():
 		pass
+
+	def find_server():
+		"""
+		Find available game server and return it's public IP
+		"""

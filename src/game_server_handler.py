@@ -50,6 +50,9 @@ class GameServerHandler:
         self.players = dict()
         self.state = GameState.waiting_for_players
 
+    def initialize_new_game(self):
+        raise NotImplementedError()  # TODO: implement
+
     def add_player_to_game(self, token):
         if self.state is not GameState.waiting_for_players:
             return {'status': constant.STATUS_ERROR,
