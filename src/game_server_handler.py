@@ -177,7 +177,7 @@ class GameServerHandler:
             self.players[token].add_points(1)
         else:
             for player in self.players:
-                if player is not winner_token:
+                if player != winner_token:
                     self.players[player].add_points(1)
 
         for player in self.players:
