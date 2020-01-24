@@ -1,5 +1,7 @@
 import argparse
 import enum
+import json
+import os
 import uuid
 import base_handler
 import constant
@@ -14,6 +16,7 @@ class GameState(enum.Enum):
     waiting_for_players = 1
     waiting_for_answers = 2
     waiting_for_game_master = 3
+    game_ended = 4
 
 
 class Player:
@@ -50,6 +53,10 @@ class GameServerHandler:
         self.players = dict()
         self.state = GameState.waiting_for_players
         self.round = 0
+        questions_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/questions.json')
+        with open(questions_path, 'r') as questions_file:
+            self.questions = json.load(questions_file)
+        self.current_task = None
 
     def change_gm(self):
         self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.player)
@@ -90,6 +97,7 @@ class GameServerHandler:
 
         self.players[list(self.players.keys())[0]].set_role(Role.gm)
         self.state = GameState.waiting_for_answers
+        self.current_task = self.questions.popitem()
         return {'status': constant.STATUS_OK,
                 'msg': "Game started"}
 
@@ -99,7 +107,7 @@ class GameServerHandler:
                     'msg': "Game not yet started"}
 
         return {'status': constant.STATUS_OK,
-                'msg': "No task implemented yet"}
+                'msg': self.current_task[1]}
 
     def send_answer(self, token, code_file):
         if token not in self.players:
@@ -155,7 +163,11 @@ class GameServerHandler:
         for player in self.players:
             self.players[player].add_answer(None)
         self.change_gm()
-        self.state = GameState.waiting_for_answers
+        if len(self.questions) == 0:
+            self.state = GameState.game_ended
+        else:
+            self.current_task = self.questions.popitem()
+            self.state = GameState.waiting_for_answers
         return {'status': constant.STATUS_OK,
                 'msg': "Winner given points"}
 
@@ -163,6 +175,9 @@ class GameServerHandler:
         if token not in self.players:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Player not in game"}
+        if self.state is GameState.game_ended:
+            return {'status': constant.STATUS_OK,
+                'msg': self.players[token].get_points()}
         if self.state is not GameState.waiting_for_answers:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Round is ongoing"}
