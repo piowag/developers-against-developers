@@ -49,6 +49,12 @@ class GameServerHandler:
         self.public_uuid = public_uuid
         self.players = dict()
         self.state = GameState.waiting_for_players
+        self.round = 0
+
+    def change_gm(self):
+        self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.player)
+        self.round += 1
+        self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.gm)
 
     def initialize_new_game(self):
         raise NotImplementedError()  # TODO: implement
@@ -82,7 +88,6 @@ class GameServerHandler:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Not enough players"}
 
-        # TODO: Change gm after rounds
         self.players[list(self.players.keys())[0]].set_role(Role.gm)
         self.state = GameState.waiting_for_answers
         return {'status': constant.STATUS_OK,
@@ -149,6 +154,7 @@ class GameServerHandler:
         self.players[winner_token].add_points(1)
         for player in self.players:
             self.players[player].add_answer(None)
+        self.change_gm()
         self.state = GameState.waiting_for_answers
         return {'status': constant.STATUS_OK,
                 'msg': "Winner given points"}
