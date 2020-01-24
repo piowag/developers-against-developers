@@ -36,7 +36,7 @@ def get_new_method(url, name, spec):
 		arglist = list(args)
 		for arg in spec:
 			if arg not in adict:
-				adict[arg] = arglist.pop()
+				adict[arg] = arglist.pop(0)
 
 		try:
 			req = requests.get(url + '/' + name, params=adict)
