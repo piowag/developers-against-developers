@@ -14,7 +14,9 @@ from lobby_interface import LobbyInterface
 import lobby_handler
 import k8s
 import game_server_handler
+import game_server_interface
 import base_interface
+from base_interface import response_is_ok
 
 import unittest
 
@@ -54,12 +56,66 @@ def tearDownModule():
 
 	lobby_proc.terminate()
 
+def _start_new_game():
+	available_server = LobbyInterface.find_server()
+	assert(response_is_ok(available_server))
+	print(f'found server: {available_server}')
+
+	url = available_server['address']
+
+	add1 = LobbyInterface.add_me_to_server(url)
+	assert(response_is_ok(add1))
+	add2 = LobbyInterface.add_me_to_server(url)
+	assert(response_is_ok(add2))
+
+	player1 = add1['token']
+	player2 = add2['token']
+
+	server = game_server_interface.create_game_server_interface_by_address(url)
+	r = server.get_player_role(player1)
+	assert(response_is_ok(r))
+	r = server.get_player_role(player2)
+	assert(response_is_ok(r))
+
+	r = server.start_game()
+	assert(response_is_ok(r))
+
+	return (player1, player2, server, url)
+
 class TestC1(unittest.TestCase):
 	def test_lobby_echo(self):
 		assert(LobbyInterface.echo('test1') == {'value': 'test1'})
 
 	def test_lobby_find_server(self):
 		available_server = LobbyInterface.find_server()
-		assert(base_interface.response_is_ok(available_server))
-		print(f'found server: {available_server}')
+		assert(response_is_ok(available_server))
+		print(f'available_server: {available_server}')
+
+	def test_start_game(self):
+		_start_new_game()
+
+	def test_get_role(self):
+		(p1, p2, server, url) = _start_new_game()
+		assert(server.get_player_role(p1)['role'] == 'gm')
+		assert(server.get_player_role(p2)['role'] == 'player')
+
+	def test_get_task(self):
+		(p1, p2, server, url) = _start_new_game()
+		r = server.get_task()
+		assert(response_is_ok(r))
+		print(f'task 1 = {r["msg"]}')
+
+	def test_get_answers(self):
+		(p1, p2, server, url) = _start_new_game()
+
+		r = server.send_answer(p1, 'echo answ1')
+		assert(not(response_is_ok(r))) # p1 is a GM
+		r = server.send_answer(p2, 'echo answ2')
+		assert(response_is_ok(r))
+
+		r = server.get_answers_from_players(p1)
+		assert(response_is_ok(r))
+		print(f'get_answers_from_players: {r}')
+		r = server.get_answers_from_players(p2)
+		assert(not(response_is_ok(r))) # Not a GM
 
