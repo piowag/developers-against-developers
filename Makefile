@@ -1,3 +1,7 @@
+all: test check_style
+
+test:
+	python3 -m unittest discover
 
 check_style: pylint flake8
 
@@ -13,4 +17,5 @@ flake8: install_flake8
 install_flake8:
 	@ if ! hash flake8 ; then pip3 install flake8 ; fi
 
+.PHONY: test all check_style flake8 pylint install_flake8 install_pylint
 
