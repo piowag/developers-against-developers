@@ -1,4 +1,6 @@
 
+import base_interface
+
 def create_game_server_interface():
     """
     Call like:
@@ -59,3 +61,6 @@ def create_game_server_interface():
             Returns scores after a round.
             """
     return GameServerInterface
+
+def create_game_server_interface_by_address(address: str):
+	return base_interface.decorator(address)(create_game_server_interface())

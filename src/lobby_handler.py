@@ -1,15 +1,10 @@
 
 import uuid
 import base_handler
-import base_interface
 from base_interface import response_is_ok
-from game_server_interface import create_game_server_interface
+from game_server_interface import create_game_server_interface_by_address
 import constant
 import k8s
-
-
-def create_gameserver_interface_by_address(address: str):
-	return base_interface.decorator(address)(create_game_server_interface())
 
 
 class LobbyHandler:
@@ -25,7 +20,7 @@ class LobbyHandler:
 
 	def find_server(self):
 		for addr in self.k8s.list_game_servers():
-			serv = create_gameserver_interface_by_address(addr)
+			serv = create_game_server_interface_by_address(addr)
 			serv_response = serv.initialize_new_game()
 			if response_is_ok(serv_response):
 				return serv_response
@@ -36,8 +31,8 @@ class LobbyHandler:
 	def add_me_to_server(self, server_public_url):
 		for addr in self.k8s.list_game_servers():
 			if addr == server_public_url:
-				token = uuid.uuid4()
-				serv = create_gameserver_interface_by_address(addr)
+				token = str(uuid.uuid4())
+				serv = create_game_server_interface_by_address(addr)
 				if response_is_ok(serv.add_player_to_game(token)):
 					return {'status': constant.STATUS_OK,
 					        'token': token}
