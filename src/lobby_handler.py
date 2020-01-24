@@ -23,12 +23,12 @@ class LobbyHandler:
 		responses = []
 
 		def loop():
-			for addr in servers:
-					serv = create_game_server_interface_by_address(addr)
-					serv_response = serv.initialize_new_game()
-					responses.append(serv_response)
-					if response_is_ok(serv_response):
-						return serv_response
+			for addr in list(self.k8s.list_game_servers()):
+				serv = create_game_server_interface_by_address(addr)
+				serv_response = serv.initialize_new_game()
+				responses.append(serv_response)
+				if response_is_ok(serv_response):
+					return serv_response
 
 		resp = loop()
 		if resp:
