@@ -2,6 +2,7 @@
 import uuid
 import base_handler
 import base_interface
+from base_interface import response_is_ok
 from game_server_interface import create_game_server_interface
 import constant
 
@@ -15,10 +16,6 @@ def get_gameserver_addresses():
 
 def create_gameserver_interface_by_address(address: str):
 	return base_interface.decorator(address)(create_game_server_interface())
-
-
-def response_is_ok(response_dict):
-	return 'status' in response_dict and response_dict['status'] == constant.STATUS_OK
 
 
 class LobbyHandler:

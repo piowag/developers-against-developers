@@ -6,6 +6,11 @@ from inspect import (
 
 import json
 import requests
+import constant
+
+
+def response_is_ok(response_dict):
+	return 'status' in response_dict and response_dict['status'] == constant.STATUS_OK
 
 
 class InterfaceRequestError(Exception):
