@@ -18,6 +18,6 @@ spec:
         image: leargh/devxdev:latest
         imagePullPolicy: Never
         command: ["/bin/bash", "-c"] 
-        args: ["/root/ngrok http 7231 -log=stdout > /root/ngrok-log c & python3 /root/devxdev/src/lobby_handler.py "]
+        args: ["/root/ngrok http 7231 -log=stdout > /root/ngrok-log & python3 /root/devxdev/src/lobby_handler.py "]
         securityContext:
           privileged: true
