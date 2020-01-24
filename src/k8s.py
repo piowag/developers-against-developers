@@ -16,23 +16,23 @@ class K8sApi:
         self.apps_api = client.AppsV1Api()
         self.batch_api = client.BatchV1Api()
         self.lobby_ip = self._get_lobby_ip()
-        with open("game-server.yaml", "r") as whatever:
+        with open("/root/devxdev/src/game-server.yaml", "r") as whatever:
             self.game_server = yaml.load(whatever, yaml.SafeLoader)
-        with open("inside-job.yaml", "r") as whatever:
+        with open("/root/devxdev/src/inside-job.yaml", "r") as whatever:
             self.job = yaml.load(whatever, yaml.SafeLoader)
 
     def _get_lobby_ip(self):
         try:
             pod_list = self.list_pods()
         except Exception as error:
-            with open("log.info", "a") as log_file:
+            with open("/root/devxdev/src/log.info", "a") as log_file:
                 log_file.write(f"{error}")
         for item in pod_list:
             try:
                 if item.metadata.labels["app"] == "lobby":
                     return item.status.host_ip
             except Exception as error:
-                with open("log.info", "a") as log_file:
+                with open("/root/devxdev/src/log.info", "a") as log_file:
                     log_file.write(f"{error}")
         return None
 
@@ -46,7 +46,7 @@ class K8sApi:
             self.apps_api.create_namespaced_deployment(self.namespace, server)
             return True
         except Exception as error:
-            with open("log.info", "a") as log_file:
+            with open("/root/devxdev/src/log.info", "a") as log_file:
                 log_file.write(f"{error}")
             return False
     
@@ -54,7 +54,7 @@ class K8sApi:
         try:
             pod_list = self.list_pods()
         except Exception as error:
-            with open("log.info", "a") as log_file:
+            with open("/root/devxdev/src/log.info", "a") as log_file:
                 log_file.write(f"{error}")
             return list()
         servers = []
@@ -65,7 +65,7 @@ class K8sApi:
                         item.metadata.name[-4:]
                     servers.append(address)
             except Exception as error:
-                with open("log.info", "a") as log_file:
+                with open("/root/devxdev/src/log.info", "a") as log_file:
                     log_file.write(f"{error}")
         return servers
 
@@ -85,7 +85,7 @@ class K8sApi:
         try:
             self.batch_api.create_namespaced_job(self.namespace, inside_job)
         except Exception as error:
-            with open("log.info", "a") as log_file:
+            with open("/root/devxdev/src/log.info", "a") as log_file:
                 log_file.write(f"{error}")
             return results
         time.sleep(TIMEOUT_LIMIT)
@@ -99,7 +99,7 @@ class K8sApi:
                         results[item.metadata.name] = False
             return results
         except Exception as error:
-            with open("log.info", "a") as log_file:
+            with open("/root/devxdev/src/log.info", "a") as log_file:
                 log_file.write(f"{error}")
             return results
 
