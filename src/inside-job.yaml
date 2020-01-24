@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tmp
+spec:
+  backoffLimit: 0
+  parallelism: 1
+  activeDeadlineSeconds: 120
+  ttlSecondsAfterFinished: 150
+  template:
+    spec:
+      containers:
+      - name: answer-checker
+        image: leargh/devxdev:latest
+        imagePullPolicy: Never
+        command: ["/bin/bash", "-c"] 
+        args: ["cd abcd"]
+      restartPolicy: Never
+    

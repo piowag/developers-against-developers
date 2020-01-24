@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lobby
+spec:
+  selector:
+    matchLabels:
+      app: lobby
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: lobby
+    spec:
+      hostNetwork: true
+      containers:
+      - name: lobby
+        image: leargh/devxdev:latest
+        imagePullPolicy: Never
+        command: ["/bin/bash", "-c"] 
+        args: ["/root/ngrok http 7231 -log=stdout > /root/ngrok-log c & python3 /root/devxdev/src/lobby_handler.py "]
+        securityContext:
+          privileged: true

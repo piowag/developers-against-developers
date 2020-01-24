@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-server
+spec:
+  selector:
+    matchLabels:
+      app: game-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: game-server
+    spec:
+      hostNetwork: true
+      containers:
+      - name: game-server
+        image: leargh/devxdev:latest
+        imagePullPolicy: Never
+        command: ["/bin/bash", "-c"] 
+        args: ["/root/ngrok http port -log=stdout > /root/ngrok-log & python3 /root/devxdev/src/game_server_handler.py -p port "]
+        securityContext:
+          privileged: true
