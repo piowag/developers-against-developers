@@ -26,5 +26,5 @@ class Mode(enum.Enum):
     local = 1
     prod = 2
 
-settings_mode = Mode.local
+SETTINGS_MODE = Mode.prod
 SERVER_URL_FOR_LOCAL_TESTS = LOBBY_SCHEME + LOBBY_DOMAIN_NAME + ':' + str(7200)

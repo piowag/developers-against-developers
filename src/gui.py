@@ -234,10 +234,5 @@ class PageGameMasterPickQuestion(tk.Frame):
 
 
 app = DevelopersAgainstDevelopers()
-
-#img = PhotoImage(file='icon.ico')
-#app.tk.call('wm', 'iconphoto', root._w, img)
-#app.iconbitmap('@ico-5.xbm')
-
 app.geometry("500x400")
 app.mainloop()
