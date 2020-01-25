@@ -5,20 +5,9 @@ import os
 import uuid
 import base_handler
 import constant
+from constant import Role
+from constant import GameState
 import k8s
-
-
-class Role(enum.Enum):
-    player = 1
-    gm = 2
-
-
-class GameState(enum.Enum):
-    waiting_for_players = 1
-    waiting_for_answers = 2
-    waiting_for_game_master = 3
-    game_ended = 4
-
 
 class Player:
     def __init__(self):
