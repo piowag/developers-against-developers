@@ -38,13 +38,15 @@ class K8sApi:
 
     def create_game_server(self):
         server = copy.deepcopy(self.game_server)
-        server["spec"]["metadata"]["labels"]["port"] = self.port
+        server["spec"]["template"]["metadata"]["labels"]["port"] = str(self.port)
         server["metadata"]["name"] += f"-{self.port}"
-        args: str = server["spec"]["containers"][0]["args"][0]
-        args.replace("port", f"{self.port}")
+        args: str = server["spec"]["template"]["spec"]["containers"][0]["args"][0]
+        args = args.replace("port", f"{self.port}")
+        server["spec"]["template"]["spec"]["containers"][0]["args"][0] = args
         self.port += 1
         try:
             self.apps_api.create_namespaced_deployment(self.namespace, server)
+            time.sleep(5)
             return True
         except Exception as error:
             with open("/root/devxdev/src/log.info", "a") as log_file:
@@ -62,7 +64,7 @@ class K8sApi:
         for item in pod_list:
             try:
                 if item.metadata.labels["app"] == "game-server":
-                    address = item.status.host_ip + ":" + \
+                    address = "http://" + item.status.host_ip + ":" + \
                         item.metadata.labels["port"]
                     servers.append(address)
             except Exception as error:
