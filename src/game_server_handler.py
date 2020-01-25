@@ -8,6 +8,7 @@ import constant
 from constant import Role
 from constant import GameState
 import k8s
+import re
 
 class Player:
     def __init__(self):
@@ -67,8 +68,13 @@ class GameServerHandler:
         if self.state is GameState.game_ended:
             self._reload()
 
+        with open('/root/ngrok-log', 'r') as log:
+            logs = log.read()
+            match = re.search('url=(?P<url>[^\s]*)', logs)
+            actual_public_url = match.group("url")
+
         return {'status': constant.STATUS_OK,
-                'address': self.public_url}
+                'address': actual_public_url}
 
     def add_player_to_game(self, token):
         if self.state is not GameState.waiting_for_players:
