@@ -40,18 +40,21 @@ class Player:
 class GameServerHandler:
     def __init__(self, public_uuid, public_url):
         self.public_uuid = public_uuid
-        questions_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/questions.json')
-        with open(questions_path, 'r') as questions_file:
+        self.questions_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/questions.json')
+        with open(self.questions_path, 'r') as questions_file:
             self.questions = json.load(questions_file)
         self.public_url = public_url
-        self.k8s = k8s.K8sApi()
+        if not constant.SETTINGS_MODE == constant.Mode.local:
+            self.k8s = k8s.K8sApi()
         self._reload()
 
     def _reload(self):
         self.players = dict()
-        self.state = GameState.waiting_for_players
         self.round = 0
         self.current_task = None
+        with open(self.questions_path, 'r') as questions_file:
+            self.questions = json.load(questions_file)
+        self.state = GameState.waiting_for_players
 
     def change_gm(self):
         self.players[list(self.players.keys())[self.round % len(self.players)]].set_role(Role.player)
@@ -162,9 +165,12 @@ class GameServerHandler:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Answers not yet available"}
 
-        results = self.k8s.run_code_and_get_results(
-            self.current_task[0], {winner_token: self.players[winner_token].get_answer()}
-        )
+        if not constant.SETTINGS_MODE == constant.Mode.local:
+            results = self.k8s.run_code_and_get_results(
+               self.current_task[0], {winner_token: self.players[winner_token].get_answer()}
+            )
+        else:
+            results = {winner_token: True}
 
         if results[winner_token]:
             self.players[winner_token].add_points(1)

@@ -10,7 +10,8 @@ import k8s
 class LobbyHandler:
 	def __init__(self, public_uuid):
 		self.public_uuid = public_uuid
-		self.k8s = k8s.K8sApi()
+		if not constant.SETTINGS_MODE == constant.Mode.local:
+			self.k8s = k8s.K8sApi()
 
 	def echo(self, what_to_echo):
 		return {'value': what_to_echo}
@@ -19,8 +20,15 @@ class LobbyHandler:
 		return {'uuid': str(self.public_uuid)}
 
 	def find_server(self):
-		for addr in self.k8s.list_game_servers():
-			serv = create_game_server_interface_by_address(addr)
+
+		if not constant.SETTINGS_MODE == constant.Mode.local:
+			for addr in self.k8s.list_game_servers():
+				serv = create_game_server_interface_by_address(addr)
+				serv_response = serv.initialize_new_game()
+				if response_is_ok(serv_response):
+					return serv_response
+		else:
+			serv = create_game_server_interface_by_address(constant.SERVER_URL_FOR_LOCAL_TESTS)
 			serv_response = serv.initialize_new_game()
 			if response_is_ok(serv_response):
 				return serv_response
@@ -29,13 +37,20 @@ class LobbyHandler:
 		        'msg': 'servers are busy'}
 
 	def add_me_to_server(self, server_public_url):
-		for addr in self.k8s.list_game_servers():
-			if addr == server_public_url:
-				token = str(uuid.uuid4())
-				serv = create_game_server_interface_by_address(addr)
-				if response_is_ok(serv.add_player_to_game(token)):
-					return {'status': constant.STATUS_OK,
-					        'token': token}
+		if not constant.SETTINGS_MODE == constant.Mode.local:
+			for addr in self.k8s.list_game_servers():
+				if addr == server_public_url:
+					token = str(uuid.uuid4())
+					serv = create_game_server_interface_by_address(addr)
+					if response_is_ok(serv.add_player_to_game(token)):
+						return {'status': constant.STATUS_OK,
+								'token': token}
+		else:
+			token = str(uuid.uuid4())
+			serv = create_game_server_interface_by_address(server_public_url)
+			if response_is_ok(serv.add_player_to_game(token)):
+				return {'status': constant.STATUS_OK,
+						'token': token}
 
 		return {'status': constant.STATUS_ERROR,
 		        'msg': 'bad server_public_url'}

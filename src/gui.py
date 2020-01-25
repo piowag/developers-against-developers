@@ -204,17 +204,17 @@ class PageGameMasterPickQuestion(tk.Frame):
 
         label_question1 = tk.Label(self, text="Answer 1")
         label_question1.grid(row=3, column=1)
-        self.question1_answer = Text(self, height=10, width=20)
+        self.question1_answer = Text(self, height=10, width=30)
         self.question1_answer.grid(row=4, column=1, rowspan=5)
 
         label_question2 = tk.Label(self, text="Answer 2")
         label_question2.grid(row=3, column=2)
-        self.question2_answer = Text(self, height=10, width=20)
+        self.question2_answer = Text(self, height=10, width=30)
         self.question2_answer.grid(row=4, column=2, rowspan=5)
 
         label_question3 = tk.Label(self, text="Answer 3")
         label_question3.grid(row=3, column=3)
-        self.question3_answer = Text(self, height=10, width=20)
+        self.question3_answer = Text(self, height=10, width=30)
         self.question3_answer.grid(row=4, column=3, rowspan=5)
 
         button_accept_question1 = tk.Button(self, text="Choose", command=lambda:[ controller.show_frame(PageGame),pick_question1(),], padx=16)
