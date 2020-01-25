@@ -38,8 +38,9 @@ class K8sApi:
 
     def create_game_server(self):
         server = copy.deepcopy(self.game_server)
-        server["metadata"]["name"] += f"-{port}"
-        args:str = server["spec"]["containers"][0]["args"][0]
+        server["spec"]["metadata"]["labels"]["port"] = self.port
+        server["metadata"]["name"] += f"-{self.port}"
+        args: str = server["spec"]["containers"][0]["args"][0]
         args.replace("port", f"{self.port}")
         self.port += 1
         try:
@@ -49,7 +50,7 @@ class K8sApi:
             with open("/root/devxdev/src/log.info", "a") as log_file:
                 log_file.write(f"{error}")
             return False
-    
+
     def list_game_servers(self):
         try:
             pod_list = self.list_pods()
@@ -62,7 +63,7 @@ class K8sApi:
             try:
                 if item.metadata.labels["app"] == "game-server":
                     address = item.status.host_ip + ":" + \
-                        item.metadata.name[-4:]
+                        item.metadata.labels["port"]
                     servers.append(address)
             except Exception as error:
                 with open("/root/devxdev/src/log.info", "a") as log_file:
@@ -102,8 +103,3 @@ class K8sApi:
             with open("/root/devxdev/src/log.info", "a") as log_file:
                 log_file.write(f"{error}")
             return results
-
-
-if __name__ == "__main__":
-    k8s = K8sApi()
-    k8s.print_pods()
