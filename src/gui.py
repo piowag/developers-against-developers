@@ -4,6 +4,7 @@ import constant
 import lobby_interface as li
 import base_interface as bi
 import game_server_interface as gs
+import html
 
 
 LARGE_FONT= ("Verdana", 12)
@@ -159,7 +160,7 @@ class PageGame(tk.Frame):
 
         def send_answer():
             ans = my_answer.get("1.0", END)
-            player.game_server.send_answer(player.token, ans)
+            player.game_server.send_answer(player.token, html.escape(ans))
 
         def start_game():
             player.game_server.start_game()
@@ -226,11 +227,11 @@ class PageGameMasterPickQuestion(tk.Frame):
 
    def prepare(self, player):
        if len(player.gm_answers) >= 1:
-           self.question1_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[0]], END)
+           self.question1_answer.insert(INSERT, html.unescape(player.gm_answers[list(player.gm_answers.keys())[0]]), END)
        if len(player.gm_answers) >= 2:
-           self.question2_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[1]], END)
+           self.question2_answer.insert(INSERT, html.unescape(player.gm_answers[list(player.gm_answers.keys())[1]]), END)
        if len(player.gm_answers) >= 3:
-           self.question3_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[2]], END)
+           self.question3_answer.insert(INSERT, html.unescape(player.gm_answers[list(player.gm_answers.keys())[2]]), END)
 
 
 app = DevelopersAgainstDevelopers()
