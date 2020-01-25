@@ -28,14 +28,6 @@ def setUpModule():
 	global lobby_proc
 	global game_server_procs
 
-	for addr in k8s.K8sApi().list_game_servers():
-		port = int(addr[-4:])
-		proc = Process(target=lambda: game_server_handler.run(port))
-		proc.start()
-		game_server_procs.append(proc)
-
-	time.sleep(1)  # lazy way to wait for servers to start up
-
 	lobby_proc = Process(target=lambda: lobby_handler.run())
 	lobby_proc.start()
 
@@ -52,9 +44,7 @@ def tearDownModule():
 	global lobby_proc
 	global game_server_procs
 
-	for proc in game_server_procs:
-			proc.terminate()
-
+	k8s.K8sApi._shutdown_all()
 	lobby_proc.terminate()
 
 def _start_new_game():

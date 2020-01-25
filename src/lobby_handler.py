@@ -19,14 +19,26 @@ class LobbyHandler:
 		return {'uuid': str(self.public_uuid)}
 
 	def find_server(self):
-		for addr in self.k8s.list_game_servers():
-			serv = create_game_server_interface_by_address(addr)
-			serv_response = serv.initialize_new_game()
-			if response_is_ok(serv_response):
-				return serv_response
+		def loop():
+			for addr in list(self.k8s.list_game_servers()):
+				serv = create_game_server_interface_by_address(addr)
+				serv_response = serv.initialize_new_game()
+				if response_is_ok(serv_response):
+					return serv_response
 
-		return {'status': constant.STATUS_ERROR,
-		        'msg': 'servers are busy'}
+		resp = loop()
+		if resp:
+			return resp
+		else:
+			if not self.k8s.create_game_server():
+				return {'status': constant.STATUS_ERROR,
+				        'msg': 'could not create new server'}
+			resp = loop()
+			if resp:
+				return resp
+			else:
+				return {'status': constant.STATUS_ERROR,
+				        'msg': 'servers are busy'}
 
 	def add_me_to_server(self, server_public_url):
 		for addr in self.k8s.list_game_servers():
