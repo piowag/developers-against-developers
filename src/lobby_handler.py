@@ -53,7 +53,7 @@ class LobbyHandler:
 		        'msg': 'bad server_public_url'}
 
 def run():
-	print(f'lobby started')
+	print('lobby started')
 	base_handler.run(
 		LobbyHandler(uuid.uuid4()),
 		address=constant.LOBBY_DOMAIN_NAME,
