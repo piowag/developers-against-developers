@@ -17,5 +17,8 @@ flake8: install_flake8
 install_flake8:
 	@ if ! hash flake8 ; then pip3 install flake8 ; fi
 
-.PHONY: test all check_style flake8 pylint install_flake8 install_pylint
+install_requirements:
+	pip3 install -r requirements.txt
+
+.PHONY: test all check_style flake8 pylint install_flake8 install_pylint install_requirements
 
