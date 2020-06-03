@@ -151,6 +151,16 @@ disable=print-statement,
         too-many-return-statements,
         fixme,
         assignment-from-no-return,
+        line-too-long,
+        attribute-defined-outside-init,
+        wrong-import-order,
+        unused-import,
+        too-many-instance-attributes,
+        anomalous-backslash-in-string,
+        broad-except,
+        no-else-return,
+        f-string-without-interpolation,
+        inconsistent-return-statements,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
