@@ -8,7 +8,6 @@ import constant
 from constant import Role
 from constant import GameState
 import k8s
-import re
 
 class Player:
     def __init__(self):
@@ -68,13 +67,8 @@ class GameServerHandler:
         if self.state is GameState.game_ended:
             self._reload()
 
-        with open('/root/ngrok-log', 'r') as log:
-            logs = log.read()
-            match = re.search('url=(?P<url>[^\s]*)', logs)
-            actual_public_url = match.group("url")
-
         return {'status': constant.STATUS_OK,
-                'address': actual_public_url}
+                'address': self.public_url}
 
     def add_player_to_game(self, token):
         if self.state is not GameState.waiting_for_players:
@@ -205,16 +199,18 @@ class GameServerHandler:
         return {'status': constant.STATUS_OK,
                 'msg': self.players[token].get_points()}
 
-def run(port):
-    url = constant.LOBBY_SCHEME + constant.LOBBY_DOMAIN_NAME + ':' + str(port)
+def run(scheme, address, port):
+    url = f'{scheme}{address}:{port}'
     print(f'server started on {url}')
     base_handler.run(
         GameServerHandler(uuid.uuid4(), url),
-        address=constant.LOBBY_DOMAIN_NAME,
+        address=address,
         port=port)
 
 if __name__ == '__main__':
     PARSER = argparse.ArgumentParser()
-    PARSER.add_argument('-p', help='Port number')
+    PARSER.add_argument('--scheme', help='url to run server on', const=constant.LOBBY_SCHEME)
+    PARSER.add_argument('--address', help='url to run server on', const=constant.LOBBY_DOMAIN_NAME)
+    PARSER.add_argument('--port', type=int, help='url to run server on', const=constant.LOBBY_PORT)
     ARGS = PARSER.parse_args()
-    run(int(ARGS.p))
+    run(ARGS.scheme, ARGS.address, ARGS.port)

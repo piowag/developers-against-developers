@@ -2,7 +2,7 @@ import enum
 
 # TODO: redefine these
 LOBBY_SCHEME = 'http://'
-LOBBY_DOMAIN_NAME = '0.0.0.0'
+LOBBY_DOMAIN_NAME = '127.0.0.1'
 LOBBY_PORT = 7231
 LOBBY_URL = LOBBY_SCHEME + LOBBY_DOMAIN_NAME + ':' + str(LOBBY_PORT)
 

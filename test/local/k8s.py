@@ -2,6 +2,7 @@
 import subprocess
 from multiprocessing import Process, Queue
 import game_server_handler
+import constant
 import os
 import signal
 
@@ -25,9 +26,13 @@ class K8sApi:
 
 	def create_game_server(self):
 		self.port_id += 1
-		self.servers.append(f'http://0.0.0.0:{self.port_id}')
+		scheme = constant.LOBBY_SCHEME
+		address = constant.LOBBY_DOMAIN_NAME
+		port = self.port_id
+		url = f'{scheme}{address}:{port}'
+		self.servers.append(url)
 
-		proc = Process(target=lambda port: game_server_handler.run(port), args=(self.port_id,))
+		proc = Process(target=lambda: game_server_handler.run(scheme, address, port), args=())
 		proc.start()
 		processes.put(proc.pid)
 		return True
