@@ -6,7 +6,7 @@ import constant
 import os
 import signal
 
-TEST_FOLDER = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../tests'))
+TEST_FOLDER = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../tasks'))
 
 """
 Fake kubernetes API

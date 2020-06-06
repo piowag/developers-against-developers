@@ -83,7 +83,7 @@ class K8sApi:
             inside_job = copy.deepcopy(self.job)
             inside_job["metadata"]["name"] = user
             task = \
-                answer + f" ; python3 /root/devxdev/tests/test{question_id}.py"
+                answer + f" ; python3 /root/devxdev/tasks/test{question_id}.py"
             inside_job["spec"]["containers"][0]["args"][0] = task
         try:
             self.batch_api.create_namespaced_job(self.namespace, inside_job)
