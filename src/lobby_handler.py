@@ -20,22 +20,27 @@ class LobbyHandler:
 
 	def find_server(self):
 		def loop():
-			for addr in list(self.k8s.list_game_servers()):
+			for addr in self.k8s.list_game_servers():
 				serv = create_game_server_interface_by_address(addr)
 				serv_response = serv.initialize_new_game()
 				if response_is_ok(serv_response):
-					return serv_response
+					return addr
 
-		resp = loop()
-		if resp:
-			return resp
+		addr = loop()
+		if addr:
+			return {'status': constant.STATUS_OK,
+			        'address': addr}
 		else:
+			# No available servers. Try to create one
 			if not self.k8s.create_game_server():
 				return {'status': constant.STATUS_ERROR,
 				        'msg': 'could not create new server'}
-			resp = loop()
-			if resp:
-				return resp
+
+			# Search again
+			addr = loop()
+			if addr:
+				return {'status': constant.STATUS_OK,
+				        'address': addr}
 			else:
 				return {'status': constant.STATUS_ERROR,
 				        'msg': 'servers are busy'}

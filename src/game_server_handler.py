@@ -38,12 +38,12 @@ class Player:
 
 
 class GameServerHandler:
-    def __init__(self, public_uuid, public_url):
+    def __init__(self, public_uuid, private_url):
         self.public_uuid = public_uuid
         questions_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/questions.json')
         with open(questions_path, 'r') as questions_file:
             self.questions = json.load(questions_file)
-        self.public_url = public_url
+        self.private_url = private_url
         self.k8s = k8s.K8sApi()
         self._reload()
 
@@ -68,7 +68,7 @@ class GameServerHandler:
             self._reload()
 
         return {'status': constant.STATUS_OK,
-                'address': self.public_url}
+                'address': self.private_url}
 
     def add_player_to_game(self, token):
         if self.state is not GameState.waiting_for_players:
@@ -209,8 +209,8 @@ def run(scheme, address, port):
 
 if __name__ == '__main__':
     PARSER = argparse.ArgumentParser()
-    PARSER.add_argument('--scheme', help='url to run server on', const=constant.LOBBY_SCHEME)
-    PARSER.add_argument('--address', help='url to run server on', const=constant.LOBBY_DOMAIN_NAME)
-    PARSER.add_argument('--port', type=int, help='url to run server on', const=constant.LOBBY_PORT)
+    PARSER.add_argument('--scheme', help='url to run server on', const=constant.GAME_SERVER_SCHEME)
+    PARSER.add_argument('--address', help='url to run server on', const=constant.GAME_SERVER_DOMAIN_NAME)
+    PARSER.add_argument('--port', type=int, help='url to run server on', const=constant.GAME_SERVER_PORT)
     ARGS = PARSER.parse_args()
     run(ARGS.scheme, ARGS.address, ARGS.port)

@@ -26,8 +26,8 @@ class K8sApi:
 
 	def create_game_server(self):
 		self.port_id += 1
-		scheme = constant.LOBBY_SCHEME
-		address = constant.LOBBY_DOMAIN_NAME
+		scheme = constant.GAME_SERVER_SCHEME
+		address = constant.GAME_SERVER_DOMAIN_NAME
 		port = self.port_id
 		url = f'{scheme}{address}:{port}'
 		self.servers.append(url)
