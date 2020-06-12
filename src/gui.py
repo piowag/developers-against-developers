@@ -99,6 +99,7 @@ class PageCreate(tk.Frame):
                 response = lobby.add_me_to_server(player.server_url)
                 if bi.response_is_ok(response):
                     player.token = response["token"]
+                    app.geometry("1000x600")
                     controller.show_frame(PageGame)
                     player.game_server = bi.decorator(player.server_url)(gs.create_game_server_interface())
 
