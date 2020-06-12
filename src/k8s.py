@@ -59,7 +59,7 @@ class K8sApi:
                 if "game-server" in item.metadata.labels["app"]:
                     address = "http://" + constant.LOBBY_DOMAIN_NAME + ":" + \
                         item.metadata.labels["port"]
-                    servers.append( address)
+                    servers.append(address)
             except Exception as error:
                 print(f"{error}")
         return servers

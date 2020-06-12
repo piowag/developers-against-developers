@@ -47,7 +47,7 @@ def get_new_method(url, name, spec):
 		except Exception as ex:
 			raise InterfaceRequestError('Error during reuqests.get', ex, None)
 		try:
-			print(f'recieving result')
+			print('recieving result')
 			result = json.loads(req.text)
 			print(f'json result: {result}')
 		except Exception as ex:
