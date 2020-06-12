@@ -77,7 +77,7 @@ class K8sApi:
             inside_job = copy.deepcopy(self.job)
             inside_job["metadata"]["name"] = user
             task = \
-                answer + f"\npython3 /opt/devxdev/tests/test{question_id}.py"
+                answer + f"\npython3 /opt/devxdev/tasks/test{question_id}.py"
             inside_job["spec"]["template"]["spec"]["containers"][0]["args"][0] = task
             print(task)
         try:
