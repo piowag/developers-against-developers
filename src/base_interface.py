@@ -38,12 +38,18 @@ def get_new_method(url, name, spec):
 			if arg not in adict:
 				adict[arg] = arglist.pop(0)
 
+		addr = url + '/' + name
+		print(f'sending request to "{addr}" with params = {adict}')
+
 		try:
 			req = requests.get(url + '/' + name, params=adict)
+			print(f'result.text: {req.text}')
 		except Exception as ex:
 			raise InterfaceRequestError('Error during reuqests.get', ex, None)
 		try:
+			print(f'recieving result')
 			result = json.loads(req.text)
+			print(f'json result: {result}')
 		except Exception as ex:
 			raise InterfaceRequestError('Error during json.loads', ex, req)
 

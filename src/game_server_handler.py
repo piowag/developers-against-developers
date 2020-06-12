@@ -9,6 +9,7 @@ from constant import Role
 from constant import GameState
 import k8s
 
+
 class Player:
     def __init__(self):
         self.role = Role.player
@@ -149,6 +150,10 @@ class GameServerHandler:
                 'answers': {t: p.get_answer() for t, p in self.players.items() if t != token}}
 
     def choose_winner(self, token, winner_token):
+
+        print(token)
+        print(winner_token)
+
         if token not in self.players:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Player not in game"}
@@ -162,11 +167,20 @@ class GameServerHandler:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Answers not yet available"}
 
+        print(self.current_task)
+        print(self.players)
+        if winner_token in self.players:
+            print("winner_token in players")
+            print(self.players[winner_token])
+            print(self.players[winner_token].get_answer())
+        else:
+            print("winner_token not in players")
+
         results = self.k8s.run_code_and_get_results(
             self.current_task[0], {winner_token: self.players[winner_token].get_answer()}
         )
 
-        if results[winner_token]:
+        if results and (winner_token in results) and results[winner_token]:
             self.players[winner_token].add_points(1)
             self.players[token].add_points(1)
         else:
@@ -191,13 +205,14 @@ class GameServerHandler:
                     'msg': "Player not in game"}
         if self.state is GameState.game_ended:
             return {'status': constant.STATUS_OK,
-                'msg': self.players[token].get_points()}
+                    'msg': self.players[token].get_points()}
         if self.state is not GameState.waiting_for_answers:
             return {'status': constant.STATUS_ERROR,
                     'msg': "Round is ongoing"}
 
         return {'status': constant.STATUS_OK,
                 'msg': self.players[token].get_points()}
+
 
 def run(scheme, address, port):
     url = f'{scheme}{address}:{port}'
@@ -207,10 +222,11 @@ def run(scheme, address, port):
         address=address,
         port=port)
 
+
 if __name__ == '__main__':
     PARSER = argparse.ArgumentParser()
-    PARSER.add_argument('--scheme', help='url to run server on', const=constant.GAME_SERVER_SCHEME)
-    PARSER.add_argument('--address', help='url to run server on', const=constant.GAME_SERVER_DOMAIN_NAME)
-    PARSER.add_argument('--port', type=int, help='url to run server on', const=constant.GAME_SERVER_PORT)
+    PARSER.add_argument('-s', '--scheme', help='url scheme to run server on', default=constant.GAME_SERVER_SCHEME)
+    PARSER.add_argument('-a', '--address', help='url domain name to run server on', default=constant.GAME_SERVER_DOMAIN_NAME)
+    PARSER.add_argument('-p', '--port', type=int, help='port to run server on', default=constant.GAME_SERVER_PORT)
     ARGS = PARSER.parse_args()
     run(ARGS.scheme, ARGS.address, ARGS.port)

@@ -12,12 +12,25 @@ spec:
       labels:
         app: lobby
     spec:
+      nodeSelector:
+        dedicated: master
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: master
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
       hostNetwork: true
       containers:
       - name: lobby
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "0"
         image: leargh/devxdev:latest
-        imagePullPolicy: Never
-        command: ["/bin/bash", "-c"] 
-        args: ["/root/ngrok http 7231 -log=stdout > /root/ngrok-log & python3 /root/devxdev/src/lobby_handler.py "]
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash", "-c"]
+        args: ["python3 /opt/devxdev/src/lobby_handler.py"]
         securityContext:
           privileged: true

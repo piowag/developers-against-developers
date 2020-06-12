@@ -21,6 +21,7 @@ class LobbyHandler:
 	def find_server(self):
 		def loop():
 			for addr in self.k8s.list_game_servers():
+				print(self.k8s.list_game_servers())
 				serv = create_game_server_interface_by_address(addr)
 				serv_response = serv.initialize_new_game()
 				if response_is_ok(serv_response):
@@ -61,7 +62,7 @@ def run():
 	print('lobby started')
 	base_handler.run(
 		LobbyHandler(uuid.uuid4()),
-		address=constant.LOBBY_DOMAIN_NAME,
+		address="0.0.0.0",
 		port=constant.LOBBY_PORT)
 
 if __name__ == '__main__':

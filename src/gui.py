@@ -5,7 +5,6 @@ import constant
 import lobby_interface as li
 import base_interface as bi
 import game_server_interface as gs
-import html
 
 
 LARGE_FONT= ("Verdana", 12)
@@ -160,7 +159,7 @@ class PageGame(tk.Frame):
 
         def send_answer():
             ans = my_answer.get("1.0", END)
-            player.game_server.send_answer(player.token, html.escape(ans))
+            player.game_server.send_answer(player.token, ans)
 
         def start_game():
             player.game_server.start_game()
@@ -197,11 +196,14 @@ class PageGameMasterPickQuestion(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         def pick_question1():
-            player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[0])
+            if len(player.gm_answers) >= 1:
+                player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[0])
         def pick_question2():
-            player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[1])
+            if len(player.gm_answers) >= 2:
+                player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[1])
         def pick_question3():
-            player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[2])
+            if len(player.gm_answers) >= 3:
+                player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[2])
 
         label_question1 = tk.Label(self, text="Answer 1")
         label_question1.grid(row=3, column=1)
@@ -227,11 +229,11 @@ class PageGameMasterPickQuestion(tk.Frame):
 
    def prepare(self, player):
        if len(player.gm_answers) >= 1:
-           self.question1_answer.insert(INSERT, html.unescape(player.gm_answers[list(player.gm_answers.keys())[0]]), END)
+           self.question1_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[0]], END)
        if len(player.gm_answers) >= 2:
-           self.question2_answer.insert(INSERT, html.unescape(player.gm_answers[list(player.gm_answers.keys())[1]]), END)
+           self.question2_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[1]], END)
        if len(player.gm_answers) >= 3:
-           self.question3_answer.insert(INSERT, html.unescape(player.gm_answers[list(player.gm_answers.keys())[2]]), END)
+           self.question3_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[2]], END)
 
 
 if __name__ == '__main__':
@@ -239,7 +241,7 @@ if __name__ == '__main__':
     PARSER.add_argument('-l', help='Lobby url')
     ARGS = PARSER.parse_args()
     lobby_url = ARGS.l
-    lobby = bi.decorator(lobby_url)(li.LobbyInterface)
+    lobby = li.LobbyInterface
 
 app = DevelopersAgainstDevelopers()
 app.geometry("500x400")

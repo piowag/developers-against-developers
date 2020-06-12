@@ -2,6 +2,7 @@ import time
 import copy
 import yaml
 from kubernetes import config, client
+import constant
 
 TIMEOUT_LIMIT = 120.0
 
@@ -11,65 +12,56 @@ class K8sApi:
     def __init__(self):
         config.load_incluster_config()
         self.namespace = "default"
-        self.port = 2137
+        self.nodeport = 32137
         self.core_api = client.CoreV1Api()
         self.apps_api = client.AppsV1Api()
         self.batch_api = client.BatchV1Api()
-        self.lobby_ip = self._get_lobby_ip()
-        with open("/root/devxdev/src/game-server.yaml", "r") as whatever:
+        self.lobby_ip = constant.LOBBY_URL
+        with open("/opt/devxdev/src/game-server.yaml", "r") as whatever:
             self.game_server = yaml.load(whatever, yaml.SafeLoader)
-        with open("/root/devxdev/src/inside-job.yaml", "r") as whatever:
+        with open("/opt/devxdev/src/inside-job.yaml", "r") as whatever:
             self.job = yaml.load(whatever, yaml.SafeLoader)
-
-    def _get_lobby_ip(self):
-        try:
-            pod_list = self.list_pods()
-        except Exception as error:
-            with open("/root/devxdev/src/log.info", "a") as log_file:
-                log_file.write(f"{error}")
-        for item in pod_list:
-            try:
-                if item.metadata.labels["app"] == "lobby":
-                    return item.status.host_ip
-            except Exception as error:
-                with open("/root/devxdev/src/log.info", "a") as log_file:
-                    log_file.write(f"{error}")
-        return None
+        with open("/opt/devxdev/src/game-server-service.yaml", "r") as whatever:
+            self.game_server_service = yaml.load(whatever, yaml.SafeLoader)
 
     def create_game_server(self):
         server = copy.deepcopy(self.game_server)
-        server["spec"]["template"]["metadata"]["labels"]["port"] = str(self.port)
-        server["metadata"]["name"] += f"-{self.port}"
-        args: str = server["spec"]["template"]["spec"]["containers"][0]["args"][0]
-        args = args.replace("port", f"{self.port}")
-        server["spec"]["template"]["spec"]["containers"][0]["args"][0] = args
-        self.port += 1
+        service = copy.deepcopy(self.game_server_service)
+
+        server["spec"]["template"]["metadata"]["labels"]["port"] = str(self.nodeport)
+        server["metadata"]["name"] += f"-{self.nodeport}"
+        server["spec"]["template"]["metadata"]["labels"]["app"] += f"-{self.nodeport}"
+        server["spec"]["selector"]["matchLabels"]["app"] += f"-{self.nodeport}"
+
+        service["metadata"]["name"] += f"-{self.nodeport}"
+        service["spec"]["selector"]["app"] += f"-{self.nodeport}"
+        service["spec"]["ports"][0]["port"] = self.nodeport
+        service["spec"]["ports"][0]["nodePort"] = self.nodeport
+        self.nodeport += 1
         try:
             self.apps_api.create_namespaced_deployment(self.namespace, server)
-            time.sleep(5)
+            self.core_api.create_namespaced_service(self.namespace, service)
+            time.sleep(10)
             return True
         except Exception as error:
-            with open("/root/devxdev/src/log.info", "a") as log_file:
-                log_file.write(f"{error}")
+            print(f"{error}")
             return False
 
     def list_game_servers(self):
         try:
             pod_list = self.list_pods()
         except Exception as error:
-            with open("/root/devxdev/src/log.info", "a") as log_file:
-                log_file.write(f"{error}")
+            print(f"{error}")
             return list()
         servers = []
         for item in pod_list:
             try:
-                if item.metadata.labels["app"] == "game-server":
-                    address = "http://" + item.status.host_ip + ":" + \
+                if "game-server" in item.metadata.labels["app"]:
+                    address = "http://" + constant.LOBBY_DOMAIN_NAME + ":" + \
                         item.metadata.labels["port"]
-                    servers.append(address)
+                    servers.append( address)
             except Exception as error:
-                with open("/root/devxdev/src/log.info", "a") as log_file:
-                    log_file.write(f"{error}")
+                print(f"{error}")
         return servers
 
     def list_pods(self):
@@ -77,20 +69,23 @@ class K8sApi:
         return pods
 
     def run_code_and_get_results(self, question_id: str, code_object: dict):
+        print("got here too")
         results = dict()
         for user, answer in code_object.items():
-            results[user] = None
+            print(user, answer)
+            results[user] = False
             inside_job = copy.deepcopy(self.job)
             inside_job["metadata"]["name"] = user
             task = \
-                answer + f" ; python3 /root/devxdev/tasks/test{question_id}.py"
-            inside_job["spec"]["containers"][0]["args"][0] = task
+                answer + f"\npython3 /opt/devxdev/tests/test{question_id}.py"
+            inside_job["spec"]["template"]["spec"]["containers"][0]["args"][0] = task
+            print(task)
         try:
             self.batch_api.create_namespaced_job(self.namespace, inside_job)
         except Exception as error:
-            with open("/root/devxdev/src/log.info", "a") as log_file:
-                log_file.write(f"{error}")
+            print(f"{error}")
             return results
+        print("started")
         time.sleep(TIMEOUT_LIMIT)
         try:
             job_list = self.batch_api.list_namespaced_job(self.namespace).items
@@ -102,6 +97,5 @@ class K8sApi:
                         results[item.metadata.name] = False
             return results
         except Exception as error:
-            with open("/root/devxdev/src/log.info", "a") as log_file:
-                log_file.write(f"{error}")
+            print(f"{error}")
             return results

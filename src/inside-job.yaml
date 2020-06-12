@@ -12,7 +12,7 @@ spec:
       containers:
       - name: answer-checker
         image: leargh/devxdev:latest
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         command: ["/bin/bash", "-c"] 
         args: ["cd abcd"]
       restartPolicy: Never

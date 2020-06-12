@@ -13,12 +13,26 @@ spec:
         app: game-server
         port: port
     spec:
-      hostNetwork: true
+      nodeSelector:
+        dedicated: master
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: master
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
       containers:
       - name: game-server
         image: leargh/devxdev:latest
         imagePullPolicy: Never
         command: ["/bin/bash", "-c"] 
-        args: ["/root/ngrok http port -log=stdout > /root/ngrok-log & python3 /root/devxdev/src/game_server_handler.py -p port "]
+        args: ["python3 /opt/devxdev/src/game_server_handler.py"]
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "0"
+        ports:
+        - containerPort: 80
         securityContext:
           privileged: true

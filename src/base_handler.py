@@ -1,5 +1,6 @@
 
 import json
+import traceback
 
 from http.server import (
 	BaseHTTPRequestHandler,
@@ -64,9 +65,10 @@ class BaseHandler(BaseHTTPRequestHandler):
 				result = method(**query)
 			except Exception as ex:
 				self.log_error(f'Method "{method_name}" failed with {ex}')
+				tr = ''.join(traceback.format_exception(etype=type(ex), value=ex, tb=ex.__traceback__))
+				self.send_error(HTTPStatus.INTERNAL_SERVER_ERROR, f'Execution failed with: {ex}; trace: {tr}')
 				raise
 		except:
-			self.send_error(HTTPStatus.INTERNAL_SERVER_ERROR, 'Execution failed')
 			return
 
 		try:
