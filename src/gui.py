@@ -241,7 +241,7 @@ if __name__ == '__main__':
     PARSER.add_argument('-l', help='Lobby url')
     ARGS = PARSER.parse_args()
     lobby_url = ARGS.l
-    lobby = li.LobbyInterface
+    lobby = li.create_lobby_interface(lobby_url)
 
 app = DevelopersAgainstDevelopers()
 app.geometry("500x400")
