@@ -11,7 +11,7 @@ SRC_DIR = path.normpath(path.join(CUR_DIR, '../../src'))
 sys.path.insert(0, CUR_DIR)  # Fake API will be priotized
 sys.path.append(SRC_DIR)
 
-from lobby_interface import LobbyInterface
+import lobby_interface
 import lobby_handler
 import k8s
 import game_server_handler
@@ -23,18 +23,21 @@ import unittest
 
 game_server_procs = []
 lobby_proc = None
+lobby_address = '0.0.0.0'
+lobby_port = 8833
+lobby = lobby_interface.create_lobby_interface(f'http://{lobby_address}:{lobby_port}')
 
 def setUpModule():
 	global lobby_proc
 	global game_server_procs
 
-	lobby_proc = Process(target=lambda: lobby_handler.run())
+	lobby_proc = Process(target=lambda: lobby_handler.run(lobby_address, lobby_port))
 	lobby_proc.start()
 
 	# wait for lobby to start up
 	while True:
 		try:
-			LobbyInterface.ping()
+			lobby.ping()
 			break
 		except Exception as error:
 			print(f'waiting for lobby')
@@ -48,15 +51,15 @@ def tearDownModule():
 	lobby_proc.terminate()
 
 def _start_new_game():
-	available_server = LobbyInterface.find_server()
+	available_server = lobby.find_server()
 	assert(response_is_ok(available_server))
 	print(f'found server: {available_server}')
 
 	url = available_server['address']
 
-	add1 = LobbyInterface.add_me_to_server(url)
+	add1 = lobby.add_me_to_server(url)
 	assert(response_is_ok(add1))
-	add2 = LobbyInterface.add_me_to_server(url)
+	add2 = lobby.add_me_to_server(url)
 	assert(response_is_ok(add2))
 
 	player1 = add1['token']
@@ -75,10 +78,10 @@ def _start_new_game():
 
 class TestC1(unittest.TestCase):
 	def test_lobby_echo(self):
-		assert(LobbyInterface.echo('test1') == {'value': 'test1'})
+		assert(lobby.echo('test1') == {'value': 'test1'})
 
 	def test_lobby_find_server(self):
-		available_server = LobbyInterface.find_server()
+		available_server = lobby.find_server()
 		assert(response_is_ok(available_server))
 		print(f'available_server: {available_server}')
 
