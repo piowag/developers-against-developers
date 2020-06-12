@@ -6,8 +6,7 @@ import lobby_interface as li
 import base_interface as bi
 import game_server_interface as gs
 
-
-LARGE_FONT= ("Verdana", 12)
+LARGE_FONT = ("Verdana", 12)
 
 
 class Player:
@@ -28,13 +27,11 @@ class Player:
 
 
 class DevelopersAgainstDevelopers(tk.Tk):
-
     def __init__(self, *args, **kwargs):
-        
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self)
 
-        container.pack(side="top", fill="both", expand = True)
+        container.pack(side="top", fill="both", expand=True)
 
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
@@ -42,7 +39,7 @@ class DevelopersAgainstDevelopers(tk.Tk):
         self.frames = {}
         self.player = Player()
 
-        for f in (PageStart, PageCreate, PageGame, PageEnd, PageGameMasterPickQuestion):
+        for f in (PageStart, PageCreate, PageGame, PageEnd, PageGameMasterPickQuestion, PageInstructions):
             frame = f(container, self, self.player)
             self.frames[f] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -57,32 +54,40 @@ class DevelopersAgainstDevelopers(tk.Tk):
         frame = self.frames[cont]
         frame.prepare(self.player)
 
-        
+
 class PageStart(tk.Frame):
-
     def __init__(self, parent, controller, player):
-        tk.Frame.__init__(self,parent)
+        tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Welcome to the game!", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        label.pack(pady=10, padx=10)
 
-        label1 = tk.Label(self, text="Developers Against Developers is a game used to expand knowledge and programming skills in an unusual and attractive way for users.", wraplength=500)
+        label1 = tk.Label(self,
+                          text="Developers Against Developers is a game used to expand knowledge and programming skills in an unusual and attractive way for users.",
+                          wraplength=500)
         label1.config(height=5, width=50)
         label1.pack(expand=YES, fill=BOTH)
 
+        def show_instructions():
+            app.geometry("1000x600")
+            controller.show_frame(PageInstructions)
+
+        button_instructions = tk.Button(self, text="How to play",
+                                        command=lambda: show_instructions(), padx=20)
+        button_instructions.pack()
+
         button_create = tk.Button(self, text="Start",
-                            command=lambda: controller.show_frame(PageCreate), padx=40)
+                                  command=lambda: controller.show_frame(PageCreate), padx=40)
         button_create.pack()
 
 
 class PageCreate(tk.Frame):
-
     def __init__(self, parent, controller, player):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Welcome to the lobby", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        label.pack(pady=10, padx=10)
 
         label_nick = tk.Label(self, text="Enter your name")
-        label_nick.pack(pady=10,padx=10)
+        label_nick.pack(pady=10, padx=10)
 
         nick = Entry(self, width=50)
         nick.pack()
@@ -103,21 +108,58 @@ class PageCreate(tk.Frame):
                     controller.show_frame(PageGame)
                     player.game_server = bi.decorator(player.server_url)(gs.create_game_server_interface())
 
-
         button_confirm = tk.Button(self, text="Confirm", width=10, command=player_nickname)
         button_confirm.pack()
 
         button_exit = tk.Button(self, text="Start game",
-                            command=lambda: join_game())
+                                command=lambda: join_game())
         button_exit.pack(side=RIGHT, fill=X)
 
         button_exit = tk.Button(self, text="Exit",
-                            command=lambda: controller.show_frame(PageStart))
+                                command=lambda: controller.show_frame(PageStart))
         button_exit.pack(side=LEFT, fill=X)
 
 
-class PageGame(tk.Frame):
+class PageInstructions(tk.Frame):
+    def __init__(self, parent, controller, player):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="Instructions", font=LARGE_FONT)
+        label.pack(pady=10, padx=10)
 
+        self.game_instructions = "1. JOINING A GAME:\n" \
+                                 "  - Pick and confirm a name for your player\n" \
+                                 "  - Press 'Start' to automatically join a game.\n\n" \
+                                 "2. USER INTERFACE:\n" \
+                                 "  - Press 'Start game' to start the game\n" \
+                                 "  - Press 'Get task' to get task and/or update the status of the game\n" \
+                                 "  - Press 'Send answer' to send you answer to the game server\n\n" \
+                                 "3. GAME MASTER (GM) ROLE:\n" \
+                                 "  - Game Master does not provide his answers to tasks. He needs to wait for other players " \
+                                 "to finish and then picks one of the solutions submitted by other players.\n\n" \
+                                 "4. PLAYER ROLE:\n" \
+                                 "  - Players write scripts that should solve the tasks presented to them.\n\n" \
+                                 "5. GAME RULES:\n" \
+                                 "  - Game Master changes each round.\n" \
+                                 "  - If the solution chosen by the Game Master works correctly, both the owner of the " \
+                                 "solution and the Game Master get 1 point each.\n" \
+                                 "  - If the solution chosen by the Game Master does not work correctly, all players other" \
+                                 " than the owner of the solution and the Game Master get 1 point each.\n" \
+                                 "  - Game ends when there are no tasks left for players to solve.\n" \
+                                 "  - Player with the most points at the end of the game wins."
+        label1 = tk.Label(self, text=self.game_instructions, wraplength=800, anchor="w", justify=LEFT)
+        label1.config(height=5, width=50)
+        label1.pack(padx=50, expand=YES, fill=BOTH)
+
+        def go_back():
+            app.geometry("500x400")
+            controller.show_frame(PageStart)
+
+        button_back = tk.Button(self, text="Back",
+                                command=lambda: go_back(), padx=40)
+        button_back.pack()
+
+
+class PageGame(tk.Frame):
     def __init__(self, parent, controller, player):
         tk.Frame.__init__(self, parent)
 
@@ -184,24 +226,24 @@ class PageGame(tk.Frame):
 
 
 class PageEnd(tk.Frame):
-
     def __init__(self, parent, controller, player):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="The winner is: ", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        label.pack(pady=10, padx=10)
 
 
 class PageGameMasterPickQuestion(tk.Frame):
-
-   def __init__(self, parent, controller, player):
+    def __init__(self, parent, controller, player):
         tk.Frame.__init__(self, parent)
 
         def pick_question1():
             if len(player.gm_answers) >= 1:
                 player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[0])
+
         def pick_question2():
             if len(player.gm_answers) >= 2:
                 player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[1])
+
         def pick_question3():
             if len(player.gm_answers) >= 3:
                 player.game_server.choose_winner(player.token, list(player.gm_answers.keys())[2])
@@ -221,20 +263,26 @@ class PageGameMasterPickQuestion(tk.Frame):
         self.question3_answer = Text(self, height=10, width=20)
         self.question3_answer.grid(row=4, column=3, rowspan=5)
 
-        button_accept_question1 = tk.Button(self, text="Choose", command=lambda:[ controller.show_frame(PageGame),pick_question1(),], padx=16)
+        button_accept_question1 = tk.Button(self, text="Choose",
+                                            command=lambda: [controller.show_frame(PageGame), pick_question1(), ],
+                                            padx=16)
         button_accept_question1.grid(row=9, column=1)
-        button_accept_question2 = tk.Button(self, text="Choose", command=lambda:[ controller.show_frame(PageGame),pick_question2(),], padx=16)
+        button_accept_question2 = tk.Button(self, text="Choose",
+                                            command=lambda: [controller.show_frame(PageGame), pick_question2(), ],
+                                            padx=16)
         button_accept_question2.grid(row=9, column=2)
-        button_accept_question3 = tk.Button(self, text="Choose", command=lambda:[ controller.show_frame(PageGame),pick_question3(),], padx=16)
+        button_accept_question3 = tk.Button(self, text="Choose",
+                                            command=lambda: [controller.show_frame(PageGame), pick_question3(), ],
+                                            padx=16)
         button_accept_question3.grid(row=9, column=3)
 
-   def prepare(self, player):
-       if len(player.gm_answers) >= 1:
-           self.question1_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[0]], END)
-       if len(player.gm_answers) >= 2:
-           self.question2_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[1]], END)
-       if len(player.gm_answers) >= 3:
-           self.question3_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[2]], END)
+    def prepare(self, player):
+        if len(player.gm_answers) >= 1:
+            self.question1_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[0]], END)
+        if len(player.gm_answers) >= 2:
+            self.question2_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[1]], END)
+        if len(player.gm_answers) >= 3:
+            self.question3_answer.insert(INSERT, player.gm_answers[list(player.gm_answers.keys())[2]], END)
 
 
 if __name__ == '__main__':
