@@ -10,5 +10,7 @@
   "9": "File ~/lorem contains text excerpt. Copy it to file \"UpAndDown\" changing first letter to lower case, second letter to upper case, third letter to lower case etc. Spaces should be count as letters, but don't change them.\nExample:\n\"Lorem ipsum dolor\" -> \"lOrEm iPsUm dOlOr\".",
   "10": "File ~/lorem contains text excerpt. Copy it to file \"CapitalizedWords\" changing first letter of ALL words to uppercase.",
   "11": "File ~/lorem contains text excerpt. Copy it to file \"SpacesToUnderlines\" changing all spaces to underlines.",
-  "12": "File ~/lorem contains text excerpt. Copy it to file \"UpperLetters\" changing all letters to uppercase."
+  "12": "File ~/lorem contains text excerpt. Copy it to file \"UpperLetters\" changing all letters to uppercase.",
+  "13": "Write a script which creates a directory named \"task_one\" in home directory",
+  "14": "Write a script which writes the number '5' to a file ~/task_two"
 }
