@@ -62,7 +62,8 @@ class PageStart(tk.Frame):
         label.pack(pady=10, padx=10)
 
         label1 = tk.Label(self,
-                          text="Developers Against Developers is a game used to expand knowledge and programming skills in an unusual and attractive way for users.",
+                          text="Developers Against Developers is a game used to expand knowledge and programming "
+                               "skills in an unusual and attractive way for users.",
                           wraplength=500)
         label1.config(height=5, width=50)
         label1.pack(expand=YES, fill=BOTH)
@@ -93,11 +94,9 @@ class PageCreate(tk.Frame):
         nick.pack()
         nick.insert(0, "Your name")
 
-        def player_nickname():
+        def join_game():
             player_nickname = nick.get()
             player.name.set(player_nickname)
-
-        def join_game():
             server_info = lobby.find_server()
             if bi.response_is_ok(server_info):
                 player.server_url = server_info["address"]
@@ -108,16 +107,13 @@ class PageCreate(tk.Frame):
                     controller.show_frame(PageGame)
                     player.game_server = bi.decorator(player.server_url)(gs.create_game_server_interface())
 
-        button_confirm = tk.Button(self, text="Confirm", width=10, command=player_nickname)
-        button_confirm.pack()
-
         button_exit = tk.Button(self, text="Start game",
                                 command=lambda: join_game())
-        button_exit.pack(side=RIGHT, fill=X)
+        button_exit.pack(padx=20, side=RIGHT, fill=X)
 
         button_exit = tk.Button(self, text="Exit",
                                 command=lambda: controller.show_frame(PageStart))
-        button_exit.pack(side=LEFT, fill=X)
+        button_exit.pack(padx=20, side=LEFT, fill=X)
 
 
 class PageInstructions(tk.Frame):
@@ -131,7 +127,7 @@ class PageInstructions(tk.Frame):
                                  "  - Press 'Start' to automatically join a game.\n\n" \
                                  "2. USER INTERFACE:\n" \
                                  "  - Press 'Start game' to start the game\n" \
-                                 "  - Press 'Get task' to get task and/or update the status of the game\n" \
+                                 "  - Press 'Update state' to get task and/or update the status of the game\n" \
                                  "  - Press 'Send answer' to send you answer to the game server\n\n" \
                                  "3. GAME MASTER (GM) ROLE:\n" \
                                  "  - Game Master does not provide his answers to tasks. He needs to wait for other players " \
