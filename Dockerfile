@@ -12,4 +12,6 @@ RUN pip3 install -r requirements.txt
 
 WORKDIR /root/
 
+ADD ./src/lorem ./lorem
+
 CMD ["/bin/bash"]

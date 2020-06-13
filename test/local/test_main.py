@@ -122,5 +122,5 @@ class TestC1(unittest.TestCase):
 		assert(response_is_ok(r))
 
 		r = server.get_round_results(p2)
-		assert(r['msg'] == 1)
+		assert(r['msg'] == 0)
 

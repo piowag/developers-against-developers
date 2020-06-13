@@ -1,4 +1,14 @@
 {
   "1": "Write a script which creates a directory named \"task_one\" in home directory",
-  "2": "Write a script which writes the number '5' to a file ~/task_two"
+  "2": "Write a script which writes the number '5' to a file ~/task_two",
+  "3": "Write a script which creates a directory named \"CreateMe\"",
+  "4": "Write a script which creates a text file named \"CreateMe.txt\"",
+  "5": "Write a script which creates directory named \"Question\". In the directory create a text document called \"TXT.txt\" containing the words \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\"",
+  "6": "Write a script which creates a file \"TXT_rights_of_use.txt\" and change the usage rights to:\n- Read, write permission for owner\n- No permissions for the rest.",
+  "7": "Write a script which creates a file \"TXT_rights_of_use.txt\" and change the usage rights to:\n- Read, write, execute permission for owner,\n- Read & write permission for group,\n- No permissions for other users.",
+  "8": "Make a file \"TXT_rights_of_use.txt\" and change the usage rights to:\nNo permissions for everyone.",
+  "9": "File ~/lorem contains text excerpt. Copy it to file \"UpAndDown\" changing first letter to lower case, second letter to upper case, third letter to lower case etc. Spaces should be count as letters, but don't change them.\nExample:\n\"Lorem ipsum dolor\" -> \"lOrEm iPsUm dOlOr\".",
+  "10": "File ~/lorem contains text excerpt. Copy it to file \"CapitalizedWords\" changing first letter of ALL words to uppercase.",
+  "11": "File ~/lorem contains text excerpt. Copy it to file \"SpacesToUnderlines\" changing all spaces to underlines.",
+  "12": "File ~/lorem contains text excerpt. Copy it to file \"UpperLetters\" changing all letters to uppercase."
 }
