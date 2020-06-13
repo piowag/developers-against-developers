@@ -1,6 +1,11 @@
-import os
+import os.path
+from os import path
 
-assert os.path.isfile(os.path.expanduser('~/task_two'))
+def main():
 
-with open(os.path.expanduser('~/task_two'), 'r') as f:
-    assert f.read().strip() == "5"
+    assert os.path.exists('~/task_two.txt')
+    f = open("~/task_two.txt", "r")
+    assert(f.read() == "5")
+
+if __name__== "__main__":
+       main()
