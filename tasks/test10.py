@@ -13,8 +13,8 @@ import os
 def main():
 
     assert os.path.isfile(os.path.expanduser('~/UpperLetters.txt'))
-    f = open("~/UpperLetters.txt", "r")
-    assert(f.read() == "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Vivamus Volutpat Cursus Odio, Sed Molestie Nulla Tincidunt Eu. Quisque In Sem Elit. Maecenas Scelerisque Augue Eu Purus Sodales Dapibus. Phasellus Sodales, Massa Vel Convallis Mollis, Metus Ante Eleifend Libero, Eleifend Porta Erat Tortor Non Augue. Aliquam Quis Feugiat Magna. Quisque Non Purus Sed Nisl Pellentesque Rutrum. Vivamus Pellentesque Et Sem Eu Pretium. Suspendisse Egestas Tristique Tincidunt. Pellentesque Purus Felis, Tincidunt A Mollis Id, Imperdiet Eu Risus. Morbi Vitae Tellus Est. Phasellus Maximus Lorem Varius Tortor Egestas Finibus Vitae A Justo. Mauris Sit Amet Pretium Erat. Vivamus Ac Dui A Ante Venenatis Posuere Eu Sed Lacus. Maecenas Vulputate Metus Sed Gravida Condimentum.")
+    f = open(os.path.expanduser("~/UpperLetters.txt"), "r")
+    assert(f.read().strip == "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Vivamus Volutpat Cursus Odio, Sed Molestie Nulla Tincidunt Eu. Quisque In Sem Elit. Maecenas Scelerisque Augue Eu Purus Sodales Dapibus. Phasellus Sodales, Massa Vel Convallis Mollis, Metus Ante Eleifend Libero, Eleifend Porta Erat Tortor Non Augue. Aliquam Quis Feugiat Magna. Quisque Non Purus Sed Nisl Pellentesque Rutrum. Vivamus Pellentesque Et Sem Eu Pretium. Suspendisse Egestas Tristique Tincidunt. Pellentesque Purus Felis, Tincidunt A Mollis Id, Imperdiet Eu Risus. Morbi Vitae Tellus Est. Phasellus Maximus Lorem Varius Tortor Egestas Finibus Vitae A Justo. Mauris Sit Amet Pretium Erat. Vivamus Ac Dui A Ante Venenatis Posuere Eu Sed Lacus. Maecenas Vulputate Metus Sed Gravida Condimentum.")
     
 if __name__== "__main__":
        main()

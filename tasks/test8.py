@@ -6,7 +6,7 @@ import stat
 
 def main():
 
-    f = "~/TXT_rights_of_use.txt"
+    f = os.path.expanduser("~/TXT_rights_of_use.txt")
 
     status = os.stat(f) 
     assert(oct(status.st_mode)[-3:] == "000")

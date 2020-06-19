@@ -11,8 +11,8 @@ import os
 def main():
 
     assert os.path.isfile(os.path.expanduser('~/UpAndDown.txt'))
-    f = open("~/UpAndDown.txt", "r")
-    assert(f.read() == "lOrEm iPsUm dOlOr sIt aMeT CoNsEcTeTuR AdIpIsCiNg eLiT Ut vEl cOnGuE MaGnA NuNc sEmPeR Ut iPsUm aT AuCtOr aEnEaN VaRiUs eLeIfEnD CoNdImEnTuM.")
+    f = open(os.path.expanduser("~/UpAndDown.txt"), "r")
+    assert(f.read().strip() == "lOrEm iPsUm dOlOr sIt aMeT CoNsEcTeTuR AdIpIsCiNg eLiT Ut vEl cOnGuE MaGnA NuNc sEmPeR Ut iPsUm aT AuCtOr aEnEaN VaRiUs eLeIfEnD CoNdImEnTuM.")
 
 if __name__== "__main__":
        main()

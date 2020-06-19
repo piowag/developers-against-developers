@@ -6,9 +6,9 @@ from os import path
 
 def main():
 
-    assert os.path.exists('~/Question/TXT.txt')
-    f = open("~/Question/TXT.txt", "r")
-    assert(f.read() == "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+    assert os.path.exists(os.path.expanduser('~/Question/TXT.txt'))
+    f = open(os.path.expanduser("~/Question/TXT.txt"), "r")
+    assert(f.read().strip() == "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
 
 if __name__== "__main__":
        main()

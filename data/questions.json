@@ -1,6 +1,6 @@
 {
   "1": "Write a script which creates a directory named \"task_one\" in home directory",
-  "2": "Write a script which writes the number '5' to a file ~/task_two",
+  "2": "Write a script which writes the number '5' to a file ~/task_two.txt",
   "3": "Write a script which creates a directory named \"CreateMe\"",
   "4": "Write a script which creates a text file named \"CreateMe.txt\"",
   "5": "Write a script which creates directory named \"Question\". In the directory create a text document called \"TXT.txt\" containing the words \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\"",
@@ -12,5 +12,5 @@
   "11": "File ~/lorem contains text excerpt. Copy it to file \"SpacesToUnderlines\" changing all spaces to underlines.",
   "12": "File ~/lorem contains text excerpt. Copy it to file \"UpperLetters\" changing all letters to uppercase.",
   "13": "Write a script which creates a directory named \"task_one\" in home directory",
-  "14": "Write a script which writes the number '5' to a file ~/task_two"
+  "14": "Write a script which writes the number '5' to a file ~/task_two.txt"
 }
